@@ -34,43 +34,43 @@ local perMaterialSpawn = 1
 -- Iron
 local minIronSize = 0.0
 local maxIronSize = 2.5
-local minIronMulti = 1.5
+local minIronMulti = 2.0
 local maxIronMulti = 2.3
 
 -- Titanium
 local minTitaniumSize = 0.0
 local maxTitaniumSize = 2.5
-local minTitaniumMulti = 1.5
-local maxTitaniumMulti = 2.3
+local minTitaniumMulti = 2.0
+local maxTitaniumMulti = 2.30
 
 -- Naonite
 local minNaoniteSize = 0.0
 local maxNaoniteSize = 2.5
-local minNaoniteMulti = 1.5
-local maxNaoniteMulti = 2.3
+local minNaoniteMulti = 2.0
+local maxNaoniteMulti = 2.30
 
 -- Trinium
 local minTriniumSize = 0.0
 local maxTriniumSize = 2.5
-local minTriniumMulti = 1.5
-local maxTriniumMulti = 2.3
+local minTriniumMulti = 2.0
+local maxTriniumMulti = 2.30
 
 -- Xanion
 local minXanionSize = 0.0
 local maxXanionSize = 2.5
-local minXanionMulti = 1.5
-local maxXanionMulti = 2.3
+local minXanionMulti = 2.0
+local maxXanionMulti = 2.30
 
 -- Ogonite
 local minOgoniteSize = 0.0
 local maxOgoniteSize = 2.5
-local minOgoniteMulti = 1.5
-local maxOgoniteMulti = 2.3
+local minOgoniteMulti = 2.0
+local maxOgoniteMulti = 2.30
 
 -- Avorion
 local minAvorionSize = 0.0
 local maxAvorionSize = 2.5
-local minAvorionMulti = 1.5
+local minAvorionMulti = 2.0
 local maxAvorionMulti = 2.3
 
 --------------------------------
@@ -101,21 +101,21 @@ local maxRockMulti = 1.0
 -- Claimable Asteroids
 local minClaimSize = 100
 local maxClaimSize = 100
-local minClaimMulti = 1
-local maxClaimMulti = 1
+local minClaimMulti = 1.8
+local maxClaimMulti = 2.20
 
 -- Large Asteroids
 -- Mineral
 local minBigSize = 40
 local maxBigSize = 60
-local minBigMulti = 1
-local maxBigMulti = 1
+local minBigMulti = 1.0
+local maxBigMulti = 1.5
 
 -- Non Mineral
 local minBigRockSize = 40
 local maxBigRockSize = 60
 local minBigRockMulti = 1.0
-local maxBigRockMulti = 1
+local maxBigRockMulti = 1.5
 
 -- Field Sizes
 -- Mineral Fields
