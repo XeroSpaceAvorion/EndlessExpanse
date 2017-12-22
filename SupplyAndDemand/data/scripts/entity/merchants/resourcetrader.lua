@@ -37,6 +37,7 @@ local boughtGoodStockLabels = {}
 local boughtGoodPriceLabels = {}
 local boughtGoodTextBoxes = {}
 local boughtGoodButtons = {}
+local best = nil
 
 local shortageMaterial
 local shortageAmount
@@ -50,11 +51,13 @@ local guiInitialized = false
 -- if this function returns false, the script will not be listed in the interaction window,
 -- even though its UI may be registered
 function ResourceDepot.interactionPossible(playerIndex, option)
+	--print("TELL INAPTITUDE TO REMOVE THE REASON FOR THIS WARNING THIS ASAP")
+	--return true
     return CheckFactionInteraction(playerIndex, -25000)
 end
 
 function ResourceDepot.getUpdateInterval()
-    return 60
+    return 15
 end
 
 function ResourceDepot.restore(data)
@@ -70,12 +73,11 @@ function ResourceDepot.restore(data)
         if shortageAmount == -1 then shortageAmount = nil end
     end
 
-	if(table.empty(desiredStock))
-	{
+	if table.empty(desiredStock) then
 		local x, y = Sector():getCoordinates();
 		print("XeroSpaceAvorion::SupplyAndDemand: Restocking resource depot at (" .. x .. "," .. y .. ")! :D")
 		ResourceDepot.generateResourcesAndTrackSupply()
-	}
+	end
 
     if shortageTimer == nil then
         shortageTimer = -random():getInt(15 * 60, 60 * 60)
@@ -285,12 +287,73 @@ end
 --
 --end
 
---function updateClient(timeStep)
---
---end
+function equalizeResources(timeStep)
+	local timefactor = timeStep/60
+
+	local factorPerminute = 0.05  *timefactor--5%.
+	local minimumPerMinute = 10 *timefactor --when equalizing, please do at least 100.
+
+	--print("timefactor " .. timefactor .. " diff per update: " .. factorPerminute .. " minimum: ")
+
+	local mats =  NumMaterials();
+
+	 --Regenerate, or lose 10% to go back to normal stats.
+	for i = 1, mats do
+
+
+
+		local shortage = desiredStock[i] - stock[i]
+
+
+		if(shortage ~= 0) then
+			local bonus = 1
+			-- -6 through +6.
+			local worseness = (best - i )
+			local comparison = math.abs(worseness)
+
+			local d = math.abs(shortage)
+			local change = math.min(
+								math.max(math.ceil(d * factorPerminute),math.ceil(minimumPerMinute))
+								,d)
+
+
+			 --power 1.3 yields a nice curve where 6 = 10x increase in change speed.
+			--http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiJ4XjEuMyIsImNvbG9yIjoiIzAwMDAwMCJ9LHsidHlwZSI6MTAwMCwid2luZG93IjpbIi00LjI2NCIsIjguNzM1OTk5OTk5OTk5OTk5IiwiLTEuNDcyMDAwMDAwMDAwMDA0NCIsIjYuNTI3OTk5OTk5OTk5OTk5Il19XQ--
+			bonus = bonus + math.pow(comparison,1.3)
+ 			--print("material " .. i  .. "worseness: " .. worseness .. " bonus: " .. bonus .. "desired: " .. desiredStock[i] .. " current: " .. stock[i] .. " changebeforeamplification: " .. change);
+
+			if shortage < 0 then
+				stock[i] = stock[i] - math.min(change * bonus,d) --Cap change to exact distance to ideal stock.
+			elseif shortage > 0 then
+				stock[i] = stock[i] + math.min(change* bonus,d)  --Cap change to exact distance to ideal stock.
+			end
+
+			--Negative stock is not allowed and super destructive.
+			stock[i] = math.max(0,stock[i])
+
+			--Broadcast the new stock to clients.
+			if onServer() then
+			     broadcastInvokeClientFunction("setData", i, stock[i])
+			end
+		end
+	end
+end
+
+
+function updateClient(timeStep)
+	--equalizeResources()
+
+	invokeServerFunction("getData")
+end
 
 function ResourceDepot.updateServer(timeStep)
     shortageTimer = shortageTimer + timeStep
+
+	equalizeResources(timeStep)
+
+	if guiInitialized then
+		ResourceDepot.onShowWindow(0, material)
+	end
 
     if shortageTimer >= 0 and shortageMaterial == nil then
         ResourceDepot.startShortage()
@@ -501,7 +564,7 @@ function ResourceDepot.getBuyingFactor(material, orderingFaction)
     -- 2.0 at relation = 0
     -- 1.2 at relation = 100000
     if relation >= 0 then
-        percentage = lerp(relation, 0, 100000, 2, 1.2)
+        percentage = lerp(relation, 0, 100000, 2, 1.05)
     end
 
     -- 2.0 at relation = 0
@@ -531,13 +594,13 @@ function ResourceDepot.getSellingFactor(material, orderingFaction)
     -- 0.5 at relation = 0
     -- 0.8 at relation = 100000
     if relation >= 0 then
-        percentage = lerp(relation, 0, 100000, 0.4, 0.6)
+        percentage = lerp(relation, 0, 100000, 0.7, 0.95)
     end
 
     -- 0.5 at relation = 0
     -- 0.1 at relation <= -10000
     if relation < 0 then
-        percentage = lerp(relation, -10000, 0, 0.1, 0.4);
+        percentage = lerp(relation, -10000, 0, 0.3, 0.7);
 
         percentage = math.max(percentage, 0.1);
     end
@@ -623,11 +686,14 @@ function ResourceDepot.stopShortage()
     broadcastInvokeClientFunction("setData", material, stock[material], -1)
 end
 
+--TODO this needs to extra work to work; we probably need to set a maximum on the resources you may by.
 function ResourceDepot.UpdatePricesByStock()
-	for i = 1, NumMaterials() do
-		if(stock[i] < desiredStock[i])
-		sellPrice[i] = 10 * Material(i - 1).costFactor * 2;
-		buyPrice[i] = 10 * Material(i - 1).costFactor * 5;
+
+	local materialsCount = NumMaterials()
+	for i = 1, materialsCount do
+		--use http://fooplot.com to see the difference in buy and sell prices.
+		sellPrice[i] = 10 * Material(i - 1).costFactor  * (math.tan(i/7) +0.8)
+		buyPrice[i] = 10 * Material(i - 1).costFactor  * (math.tan(i/5) +0.8)
 	end
 end
 
@@ -643,8 +709,16 @@ function ResourceDepot.generateResourcesAndTrackSupply()
 
 	for i = 1, NumMaterials() do
 		--DesiredStock will contain the desired stock.
-		desiredStock[i] = math.max(0, ) = probabilities[i - 1] - 0.1) * (getInt(50000, 100000) * Balancing_GetSectorRichnessFactor(x, y))
-		stock[i] = math.max(0, ) = probabilities[i - 1] - 0.1) * (getInt(50000, 100000) * Balancing_GetSectorRichnessFactor(x, y))
+		desiredStock[i] =  math.max(0, probabilities[i - 1] - 0.1) * (getInt(5000, 10000) * Balancing_GetSectorRichnessFactor(x, y))
+		if desiredStock[i] > 0 then best = i end
+		stock[i] = desiredStock[i];
+	end
+
+	--Some stupid resource docks spawn without e.g. iron; ensure always at least half of best material.
+	for i = 1, best do
+		if i < best then
+			 desiredStock[i] = math.max(desiredStock[i],desiredStock[best] / 2 )
+		end
 	end
 
 	--Vanilla code; makes the lower tier materials less rare and rounds?
