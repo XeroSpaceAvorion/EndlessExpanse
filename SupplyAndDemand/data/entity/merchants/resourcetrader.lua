@@ -19,7 +19,11 @@ local window = 0
 local buyAmountTextBox = 0
 local sellAmountTextBox = 0
 
+--Table that contains the actual stock
 local stock = {}
+--Table that contains desired stock.
+local desiredStock = {}
+
 local buyPrice = {}
 local sellPrice = {}
 
@@ -36,7 +40,10 @@ local boughtGoodButtons = {}
 
 local shortageMaterial
 local shortageAmount
-local shortageTimerz
+local shortageTimer
+
+--Inaptitude:
+local standardSupply = 100000;
 
 local guiInitialized = false
 
@@ -62,6 +69,13 @@ function ResourceDepot.restore(data)
         if shortageMaterial == -1 then shortageMaterial = nil end
         if shortageAmount == -1 then shortageAmount = nil end
     end
+
+	if(table.empty(desiredStock))
+	{
+		local x, y = Sector():getCoordinates();
+		print("XeroSpaceAvorion::SupplyAndDemand: Restocking resource depot at (" .. x .. "," .. y .. ")! :D")
+		ResourceDepot.generateResourcesAndTrackSupply()
+	}
 
     if shortageTimer == nil then
         shortageTimer = -random():getInt(15 * 60, 60 * 60)
@@ -90,33 +104,12 @@ function ResourceDepot.initialize()
         station.title = "Resource Depot"%_t
     end
 
-    for i = 1, NumMaterials() do
-        sellPrice[i] = 10 * Material(i - 1).costFactor
-        buyPrice[i] = 10 * Material(i - 1).costFactor
-    end
+	ResourceDepot.UpdatePricesByStock()
 
     if onServer() then
-        math.randomseed(Sector().seed + Sector().numEntities)
 
-        -- best buy price: 1 iron for 10 credits
-        -- best sell price: 1 iron for 10 credits
-        local x, y = Sector():getCoordinates();
-
-        local probabilities = Balancing_GetMaterialProbability(x, y);
-
-        for i = 1, NumMaterials() do
-            stock[i] = math.max(0, probabilities[i - 1] - 0.1) * (getInt(5000, 10000) * Balancing_GetSectorRichnessFactor(x, y))
-        end
-
-        local num = 0
-        for i = NumMaterials(), 1, -1 do
-            stock[i] = stock[i] + num
-            num = num + stock[i] / 4;
-        end
-
-        for i = 1, NumMaterials() do
-            stock[i] = round(stock[i])
-        end
+		--Generate not only resources, but keep track of 'natural' starting supply.
+		ResourceDepot.generateResourcesAndTrackSupply();
 
         -- resource shortage
         shortageTimer = -random():getInt(15 * 60, 60 * 60)
@@ -628,4 +621,49 @@ function ResourceDepot.stopShortage()
     shortageTimer = -random():getInt(45 * 60, 90 * 60)
 
     broadcastInvokeClientFunction("setData", material, stock[material], -1)
+end
+
+function ResourceDepot.UpdatePricesByStock()
+	for i = 1, NumMaterials() do
+		if(stock[i] < desiredStock[i])
+		sellPrice[i] = 10 * Material(i - 1).costFactor * 2;
+		buyPrice[i] = 10 * Material(i - 1).costFactor * 5;
+	end
+end
+
+--Methods added to produce extra functionality.
+function ResourceDepot.generateResourcesAndTrackSupply()
+	math.randomseed(Sector().seed + Sector().numEntities)
+
+	-- best buy price: 1 iron for 10 credits
+	-- best sell price: 1 iron for 10 credits
+	local x, y = Sector():getCoordinates();
+
+	local probabilities = Balancing_GetMaterialProbability(x, y);
+
+	for i = 1, NumMaterials() do
+		--DesiredStock will contain the desired stock.
+		desiredStock[i] = math.max(0, ) = probabilities[i - 1] - 0.1) * (getInt(50000, 100000) * Balancing_GetSectorRichnessFactor(x, y))
+		stock[i] = math.max(0, ) = probabilities[i - 1] - 0.1) * (getInt(50000, 100000) * Balancing_GetSectorRichnessFactor(x, y))
+	end
+
+	--Vanilla code; makes the lower tier materials less rare and rounds?
+	--Top loop is dodgy, though.
+	local num = 0
+	for i = NumMaterials(), 1, -1 do
+		stock[i] = stock[i] + num
+		num = num + stock[i] / 4;
+	end
+
+	for i = 1, NumMaterials() do
+		stock[i] = round(stock[i])
+	end
+end
+
+
+function table.empty (self)
+    for _, _ in pairs(self) do
+        return false
+    end
+    return true
 end
