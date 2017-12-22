@@ -34,44 +34,44 @@ local perMaterialSpawn = 1
 -- Iron
 local minIronSize = 0.0
 local maxIronSize = 2.5
-local minIronMulti = 1
-local maxIronMulti = 1
+local minIronMulti = 1.5
+local maxIronMulti = 2.3
 
 -- Titanium
 local minTitaniumSize = 0.0
 local maxTitaniumSize = 2.5
-local minTitaniumMulti = 1
-local maxTitaniumMulti = 1
+local minTitaniumMulti = 1.5
+local maxTitaniumMulti = 2.3
 
 -- Naonite
 local minNaoniteSize = 0.0
 local maxNaoniteSize = 2.5
-local minNaoniteMulti = 1
-local maxNaoniteMulti = 1
+local minNaoniteMulti = 1.5
+local maxNaoniteMulti = 2.3
 
 -- Trinium
 local minTriniumSize = 0.0
 local maxTriniumSize = 2.5
-local minTriniumMulti = 1
-local maxTriniumMulti = 1
+local minTriniumMulti = 1.5
+local maxTriniumMulti = 2.3
 
 -- Xanion
 local minXanionSize = 0.0
 local maxXanionSize = 2.5
-local minXanionMulti = 1
-local maxXanionMulti = 1
+local minXanionMulti = 1.5
+local maxXanionMulti = 2.3
 
 -- Ogonite
 local minOgoniteSize = 0.0
 local maxOgoniteSize = 2.5
-local minOgoniteMulti = 1
-local maxOgoniteMulti = 1
+local minOgoniteMulti = 1.5
+local maxOgoniteMulti = 2.3
 
 -- Avorion
 local minAvorionSize = 0.0
 local maxAvorionSize = 2.5
-local minAvorionMulti = 1
-local maxAvorionMulti = 1
+local minAvorionMulti = 1.5
+local maxAvorionMulti = 2.3
 
 --------------------------------
 -- END ADVANCED SPAWN-----------
@@ -120,21 +120,21 @@ local maxBigRockMulti = 1
 -- Field Sizes
 -- Mineral Fields
 local denseAsteroidCount = 500
-local maxDenseBeltVolume = 1800
+local maxDenseBeltVolume = 2800
 local minDenseAsteroidCount = 5.0
 local maxDenseAsteroidCount = 25.0
 local minDenseFuzzy = 0.8
 local maxDenseFuzzy = 1.25
 
 local normalAsteroidCount = 300
-local maxNormalBeltVolume = 1800
+local maxNormalBeltVolume = 2800
 local minNormalAsteroidCount = 5.0
 local maxNormalAsteroidCount = 25.0
 local minNormalFuzzy = 0.5
 local maxNormalFuzzy = 1.0
 
 local smallAsteroidCount = 200
-local maxSmallBeltVolume = 1800
+local maxSmallBeltVolume = 2800
 local minSmallAsteroidCount = 5.0
 local maxSmallAsteroidCount = 25.0
 local minSmallFuzzy = 0.2
@@ -142,14 +142,14 @@ local maxSmallFuzzy = 0.5
 
 -- Non Mineral Fields
 local emptyAsteroidCount = 400
-local maxEmptyBeltVolume = 1800
+local maxEmptyBeltVolume = 2800
 local minEmptyAsteroidCount = 5.0
 local maxEmptyAsteroidCount = 25.0
 local minEmptyFuzzy = 0.8
 local maxEmptyFuzzy = 1.0
 
 local emptySmallAsteroidCount = 200
-local maxEmptySmallBeltVolume = 1800
+local maxEmptySmallBeltVolume = 2800
 local minEmptySmallAsteroidCount = 5.0
 local maxEmptySmallAsteroidCount = 25.0
 local minEmptySmallFuzzy = 0.2
