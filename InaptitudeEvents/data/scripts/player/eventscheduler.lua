@@ -7,8 +7,8 @@ require ("utility")
 
 local events =
 {
-    {schedule = random():getInt(60, 80) * 1, script = "xsotandistresssignal", arguments = {true}, to = 560}
-    {schedule = random():getInt(60, 80) * 60, script = "convoidistresssignal", arguments = {true}, to = 560}
+    {schedule = random():getInt(60, 80) * 1, script = "xsotandistresssignal", arguments = {true}, to = 560},
+    {schedule = random():getInt(60, 80) * 60, script = "convoidistresssignal", arguments = {true}, to = 560},
     {schedule = random():getInt(60, 80) * 60, script = "fakedistresssignal", arguments = {true}, to = 560},
     {schedule = random():getInt(60, 80) * 60, script = "pirateattackstarter", to = 560},
     {schedule = random():getInt(60, 80) * 60, script = "traderattackedbypiratesstarter", to = 560},
