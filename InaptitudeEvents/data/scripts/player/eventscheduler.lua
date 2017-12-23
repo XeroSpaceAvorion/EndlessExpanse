@@ -7,11 +7,11 @@ require ("utility")
 
 local events =
 {
-    {schedule = random():getInt(60, 80) * 1, script = "xsotandistresssignal", arguments = {true}, to = 560},
+    {schedule = random():getInt(60, 80) * 60, script = "xsotandistresssignal", arguments = {true}, to = 560},
     {schedule = random():getInt(60, 80) * 60, script = "convoidistresssignal", arguments = {true}, to = 560},
-    {schedule = random():getInt(60, 80) * 60, script = "fakedistresssignal", arguments = {true}, to = 560},
+    {schedule = random():getInt(40, 80) * 60, script = "fakedistresssignal", arguments = {true}, to = 560},
     {schedule = random():getInt(60, 80) * 60, script = "pirateattackstarter", to = 560},
-    {schedule = random():getInt(60, 80) * 60, script = "traderattackedbypiratesstarter", to = 560},
+    {schedule = random():getInt(40, 80) * 60, script = "traderattackedbypiratesstarter", to = 560},
     {schedule = random():getInt(25, 50) * 60, script = "alienattack", arguments = {0}, minimum = 5 * 60, from = 0, to = 500},
     {schedule = random():getInt(35, 70) * 60, script = "alienattack", arguments = {1}, minimum = 25 * 60, to = 500},
     {schedule = random():getInt(60, 80) * 60, script = "alienattack", arguments = {2}, minimum = 60 * 60, to = 350},
