@@ -67,8 +67,7 @@ function ResourceDepot.restore(data)
 --	print("data present: " .. tablelength(data))
 	print("XeroSpaceAvorion::SupplyAndDemand init")
 
-	--When shortageMaterial shortageAmount  are nil, tablelength returns 15 instead of 17
-	if tablelength(data) == mats*2+3 or tablelength(data) == mats*2+1 then
+	if tablelength(data) == mats*2+3 then
 		--print("modded -> modded load")
 
 		for i=1,mats do
@@ -111,8 +110,9 @@ function ResourceDepot.secure()
 		data[i+mats] = desiredStock[i]
 	end
 
-	data[1+mats*2] = shortageMaterial
-	data[2+mats*2] = shortageAmount
+    --Notice: the -1 prevents problems with tablelength!
+	data[1+mats*2] = shortageMaterial or -1
+	data[2+mats*2] = shortageAmount or -1
 	data[3+mats*2] = shortageTimer
 
     return data
