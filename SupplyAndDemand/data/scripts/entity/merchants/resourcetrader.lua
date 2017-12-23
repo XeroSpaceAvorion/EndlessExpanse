@@ -61,21 +61,34 @@ function ResourceDepot.getUpdateInterval()
 end
 
 function ResourceDepot.restore(data)
-    stock = data
 
-    -- keep compatibility with old saves
-    if tablelength(stock) == 10 then
-        shortageMaterial = table.remove(stock, 8)
-        shortageAmount = table.remove(stock, 8)
-        shortageTimer = table.remove(stock, 8)
+	local mats = NumMaterials()
 
-        if shortageMaterial == -1 then shortageMaterial = nil end
-        if shortageAmount == -1 then shortageAmount = nil end
-    end
+--	print("data present: " .. tablelength(data))
+	print("XeroSpaceAvorion::SupplyAndDemand init")
 
-	if table.empty(desiredStock) then
-		local x, y = Sector():getCoordinates();
-		print("XeroSpaceAvorion::SupplyAndDemand: Restocking resource depot at (" .. x .. "," .. y .. ")! :D")
+	--When shortageMaterial shortageAmount  are nil, tablelength returns 15 instead of 17
+	if tablelength(data) == mats*2+3 or tablelength(data) == mats*2+1 then
+		--print("modded -> modded load")
+
+		for i=1,mats do
+	  		stock[i] = 	data[i]
+         	desiredStock[i] = data[i+mats]
+		--	print("(" .. i .. ")" .. "Desired: " .. desiredStock[i] .. " actual: " .. stock[i])
+		end
+
+		shortageMaterial = data[1+mats*2]
+		shortageAmount = data[2+mats*2]
+		shortageTimer = data[3+mats*2]
+
+		for i=1,tablelength(data) do
+			if data[i] ~= nil then
+			--	print("data[" .. i .. "] == " .. data[i])
+			end
+		end
+
+	else
+		print("XeroSpaceAvorion::SupplyAndDemand: first restocking of station tablelength was: " .. tablelength(data))
 		ResourceDepot.generateResourcesAndTrackSupply()
 	end
 
@@ -88,13 +101,19 @@ end
 
 function ResourceDepot.secure()
     data = {}
-    for k, v in pairs(stock) do
-        table.insert(data, k, v)
-    end
 
-    table.insert(data, shortageMaterial or -1)
-    table.insert(data, shortageAmount or -1)
-    table.insert(data, shortageTimer)
+	mats = NumMaterials();
+
+		--print("mats" .. mats)
+
+	for i=1,mats do
+		data[i] = stock[i]
+		data[i+mats] = desiredStock[i]
+	end
+
+	data[1+mats*2] = shortageMaterial
+	data[2+mats*2] = shortageAmount
+	data[3+mats*2] = shortageTimer
 
     return data
 end
@@ -150,9 +169,7 @@ function ResourceDepot.initUI()
     ResourceDepot.buildSellGui(sellTab)
 
     ResourceDepot.retrieveData();
-
     guiInitialized = true
-
 end
 
 
@@ -300,11 +317,7 @@ function equalizeResources(timeStep)
 	 --Regenerate, or lose 10% to go back to normal stats.
 	for i = 1, mats do
 
-
-
 		local shortage = desiredStock[i] - stock[i]
-
-
 		if(shortage ~= 0) then
 			local bonus = 1
 			-- -6 through +6.
@@ -507,7 +520,7 @@ function ResourceDepot.sell(material, amount)
 
     -- resource shortage
     if material == shortageMaterial then
-        if numTraded ~= shortageAmount then
+        if numTraded < shortageAmount then
             buyer:sendChatMessage("Server"%_t, 1, "You don't have enough ${material}."%_t % {material = Material(material - 1).name})
             return
         end
@@ -706,6 +719,9 @@ function ResourceDepot.generateResourcesAndTrackSupply()
 	local x, y = Sector():getCoordinates();
 
 	local probabilities = Balancing_GetMaterialProbability(x, y);
+
+	stock = {}
+	desiredStock = {}
 
 	for i = 1, NumMaterials() do
 		--DesiredStock will contain the desired stock.
