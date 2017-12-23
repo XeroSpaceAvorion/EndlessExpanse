@@ -16,7 +16,7 @@ local events =
     {schedule = random():getInt(35, 70) * 60, script = "alienattack", arguments = {1}, minimum = 25 * 60, to = 500},
     {schedule = random():getInt(60, 80) * 60, script = "alienattack", arguments = {2}, minimum = 60 * 60, to = 350},
     {schedule = random():getInt(80, 120) * 60, script = "alienattack", arguments = {3}, minimum = 120 * 60, to = 300},
-    {schedule = random():getInt(50, 70) * 60, script = "spawntravellingmerchant", to = 520},
+    {schedule = random():getInt(50, 70) * 60, script = "spawntravellingmerchant", to = 520}
 }
 
 --local pause = 5 * 60
