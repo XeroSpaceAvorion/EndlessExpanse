@@ -577,18 +577,24 @@ function ResourceDepot.getBuyingFactor(material, orderingFaction)
     -- 2.0 at relation = 0
     -- 1.2 at relation = 100000
     if relation >= 0 then
-        percentage = lerp(relation, 0, 100000, 2, 1.05)
+		--WARNING vanilla script does not have ANY method by which price can be communicate to it.
+		--therefore prices MUST remain the same.
+        percentage = lerp(relation, 0, 100000, 2, 1.2)
     end
 
     -- 2.0 at relation = 0
     -- 3.0 at relation = -10000
     -- 3.0+ at relation < -10000
     if relation < 0 then
+		--WARNING vanilla script does not have ANY method by which price can be communicate to it.
+		--therefore prices MUST remain the same.
         percentage = lerp(relation, -10000, 0, 3, 2)
     end
 
     -- adjust for resource shortage
     if material == shortageMaterial then
+		--WARNING vanilla script does not have ANY method by which price can be communicate to it.
+		--therefore prices MUST remain the same.
         percentage = percentage * 1.5
     end
 
@@ -607,19 +613,25 @@ function ResourceDepot.getSellingFactor(material, orderingFaction)
     -- 0.5 at relation = 0
     -- 0.8 at relation = 100000
     if relation >= 0 then
-        percentage = lerp(relation, 0, 100000, 0.7, 0.95)
+		--WARNING vanilla script does not have ANY method by which price can be communicate to it.
+		--therefore prices MUST remain the same.
+        percentage = lerp(relation, 0, 100000, 0.4, 0.6)
     end
 
     -- 0.5 at relation = 0
     -- 0.1 at relation <= -10000
     if relation < 0 then
-        percentage = lerp(relation, -10000, 0, 0.3, 0.7);
+		--WARNING vanilla script does not have ANY method by which price can be communicate to it.
+		--therefore prices MUST remain the same.
+        percentage = lerp(relation, -10000, 0, 0.4, 0.7);
 
         percentage = math.max(percentage, 0.1);
     end
 
     -- adjust for resource shortage
     if material == shortageMaterial then
+		--WARNING vanilla script does not have ANY method by which price can be communicate to it.
+		--therefore prices MUST remain the same.
         percentage = percentage * 2
     end
 
@@ -704,9 +716,10 @@ function ResourceDepot.UpdatePricesByStock()
 
 	local materialsCount = NumMaterials()
 	for i = 1, materialsCount do
-		--use http://fooplot.com to see the difference in buy and sell prices.
-		sellPrice[i] = 10 * Material(i - 1).costFactor  * (math.tan(i/7) +0.8)
-		buyPrice[i] = 10 * Material(i - 1).costFactor  * (math.tan(i/5) +0.8)
+		--WARNING vanilla script does not have ANY method by which price can be communicate to it.
+		--therefore prices MUST remain the same.
+		sellPrice[i] = 10 * Material(i - 1).costFactor;
+		buyPrice[i] = 10 * Material(i - 1).costFactor;
 	end
 end
 

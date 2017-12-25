@@ -70,7 +70,7 @@ function EventScheduler.updateServer(timeStep)
 
     -- update times of events
     for _, event in pairs(events) do
-        event.time = event.time - timeStep * 100
+        event.time = event.time - timeStep
 
 		--print("time to " .. event.script .. " is : " .. event.time )
         if event.time < 0 then
